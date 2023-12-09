@@ -1,28 +1,33 @@
 import SlimSelect from 'slim-select';
 import { fetchBreeds, fetchCatByBreed } from './cat-api.js';
-import IziToast from 'izitoast';
+import iziToast from 'izitoast';
+import "izitoast/dist/css/iziToast.min.css";
 
-new SlimSelect({
-  select: '#selectElement',
-});
+// new SlimSelect({
+//   breedList: '#selectElement',
+//   placeholderText: "Select cat's breed"
+// });
 
 const breedList = document.querySelector('.breed-select');
 const catInfo = document.querySelector('.cat-info');
 const loader = document.querySelector('.loader');
 const error = document.querySelector('.error');
+const sign = document.querySelector('.sign');
 
 const url = `https://api.thecatapi.com/v1/breeds`;
 
 document.addEventListener('DOMContentLoaded', () => {
-  fetchBreeds(url)
+   fetchBreeds(url)
     .then(json => {
       if ('message' in json) {
         loader.classList.add('visually-hidden');
         throw new Error();
       }
       breedList.classList.remove('visually-hidden');
+      sign.classList.remove('visually-hidden');
       loader.classList.add('visually-hidden');
       renderBreedsList(json);
+      
     })
     .catch(error => onError(error));
 });
@@ -35,6 +40,7 @@ function renderBreedsList(breeds) {
       `;
     })
     .join('');
+
   breedList.innerHTML = markup;
 }
 
@@ -43,6 +49,8 @@ function getSelectBreed(e) {
 
   loader.classList.remove('visually-hidden');
   catInfo.classList.add('visually-hidden');
+  sign.classList.add('visually-hidden');
+
 
   fetchCatByBreed(breedId)
     .then(json => {
@@ -81,10 +89,13 @@ function renderCatInfo(breedData) {
 
 function onError() {
   error.classList.remove('visually-hidden');
-  iziToast.warning({message: 
-    'Oops! Something went wrong! Try reloading the page!'}
-  );
-}
+  iziToast.warning({
+    message: "Oops! Something went wrong! Try reloading the page!",
+    messageColor: 'white',
+    backgroundColor: 'lightpink',
+    timeout: 3000,
+    position: 'topCenter'
+});}
 
 breedList.addEventListener('change', getSelectBreed);
 
