@@ -1,5 +1,5 @@
 import SlimSelect from 'slim-select';
-import { fetchBreeds, fetchCatByBreed } from './cat-api.js';
+import { fetchBreeds, fetchCatByBreed } from './js/cat-api.js';
 import iziToast from 'izitoast';
 import "izitoast/dist/css/iziToast.min.css";
 
@@ -14,10 +14,10 @@ const loader = document.querySelector('.loader');
 const error = document.querySelector('.error');
 const sign = document.querySelector('.sign');
 
-const url = `https://api.thecatapi.com/v1/breeds`;
+// const url = `https://api.thecatapi.com/v1/breeds`;
 
 document.addEventListener('DOMContentLoaded', () => {
-   fetchBreeds(url)
+   fetchBreeds()
     .then(json => {
       if ('message' in json) {
         loader.classList.add('visually-hidden');
@@ -29,8 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
       renderBreedsList(json);
       
     })
-    .catch(error => onError(error));
-});
+    .catch(error => onError(error))
+    .finally (() => {loader.classList.add('visually-hidden');}); 
+})
+
 
 function renderBreedsList(breeds) {
   const markup = breeds
@@ -62,7 +64,8 @@ function getSelectBreed(e) {
       renderCatInfo(json);
       catInfo.classList.remove('visually-hidden');
     })
-    .catch(error => onError(error));
+    .catch(error => onError(error))
+    .finally (() => {loader.classList.add('visually-hidden');}); 
 }
 
 function renderCatInfo(breedData) {
